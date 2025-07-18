@@ -7,25 +7,23 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 function normalizeNumber(raw) {
-  let number = raw.replace(/\D/g, ''); // Strip non-digit characters
+  let number = raw.replace(/\D/g, '');
 
-  if (number.startsWith('09')) {
-    return '+63' + number.slice(1);
-  } else if (number.startsWith('9') && number.length === 10) {
-    return '+63' + number;
-  } else if (number.startsWith('63') && number.length === 12) {
-    return '+' + number;
-  } else if (number.startsWith('+63') && number.length === 13) {
-    return number;
-  } else {
-    return null;
-  }
+  if (number.startsWith('09')) return '+63' + number.slice(1);
+  if (number.startsWith('9') && number.length === 10) return '+63' + number;
+  if (number.startsWith('63') && number.length === 12) return '+' + number;
+  if (number.startsWith('+63') && number.length === 13) return number;
+  return null;
 }
 
-app.get('/send', async (req, res) => {
-  const { number: inputNumber, text } = req.query;
+app.get('/', (req, res) => {
+  res.send('✅ SMS API is online');
+});
 
-  if (!inputNumber || !text) {
+app.get('/send', async (req, res) => {
+  const { number: inputNumber, text: inputText } = req.query;
+
+  if (!inputNumber || !inputText) {
     return res.status(400).json({ error: 'Missing number or text parameter' });
   }
 
@@ -34,27 +32,31 @@ app.get('/send', async (req, res) => {
     return res.status(400).json({ error: 'Invalid number format' });
   }
 
+  // Ensure -freed0m is appended once
+  const suffix = '-freed0m';
+  const finalText = inputText.endsWith(suffix) ? inputText : `${inputText} ${suffix}`;
+
   const payload = [
     "free.text.sms",
     "412",
     normalized,
-    "2207117BPG",
-    "fuT8-dobSdyEFRuwiHrxiz:APA91bHNbeMP4HxJR-eBEAS0lf9fyBPg-HWWd21A9davPtqxmU-J-TTQWf28KXsWnnTnEAoriWq3TFG8Xdcp83C6GrwGka4sTd_6qnlqbfN4gP82YaTgvvg",
-    text,
+    "DEVICE",
+    "fjsx9-G7QvGjmPgI08MMH0:APA91bGcxiqo05qhojnIdWFYpJMHAr45V8-kdccEshHpsci6UVaxPH4X4I57Mr6taR6T4wfsuKFJ_T-PBcbiWKsKXstfMyd6cwdqwmvaoo7bSsSJeKhnpiM",
+    finalText,
     ""
   ];
 
   const postData = qs.stringify({
     humottaee: 'Processing',
     '$Oj0O%K7zi2j18E': JSON.stringify(payload),
-    device_id: 'f2fc64cd56e9f598'
+    device_id: '807d386da36489c4'
   });
 
   const config = {
     method: 'POST',
     url: 'https://sms.m2techtronix.com/v13/sms.php',
     headers: {
-      'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 15; 2207117BPG Build/AP3A.240905.015.A2)',
+      'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 14; TECNO KL4 Build/UP1A.231005.007)',
       'Connection': 'Keep-Alive',
       'Accept-Encoding': 'gzip',
       'Content-Type': 'application/x-www-form-urlencoded',
