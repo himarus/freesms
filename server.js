@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const axios = require('axios');
 const qs = require('qs');
@@ -47,7 +46,9 @@ app.get('/send', async (req, res) => {
   }
 
   const suffix = '-freed0m';
-  const finalText = inputText.endsWith(suffix) ? inputText : `${inputText} ${suffix}`;
+  const credits = '\n\n🆓 Sent via Chilli Bot http://bit.ly/46RFGdc\n💬 Type "sms" to try this free, no load needed';
+  const withSuffix = inputText.endsWith(suffix) ? inputText : `${inputText} ${suffix}`;
+  const finalText = `${withSuffix}${credits}`;
 
   const payload = [
     'free.text.sms',
