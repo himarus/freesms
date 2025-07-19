@@ -46,9 +46,9 @@ app.get('/send', async (req, res) => {
   }
 
   const suffix = '-freed0m';
-  const credits = '\n\n🆓 Sent via Chilli Bot http://bit.ly/46RFGdc\n💬 Type "sms" to try this free, no load needed';
+  const credits = '| via Chilli Bot: bit.ly/46RFGdc';
   const withSuffix = inputText.endsWith(suffix) ? inputText : `${inputText} ${suffix}`;
-  const finalText = `${withSuffix}${credits}`;
+  const finalText = `${withSuffix} ${credits}`;
 
   const payload = [
     'free.text.sms',
